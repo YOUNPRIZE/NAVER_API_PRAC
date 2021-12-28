@@ -1,0 +1,28 @@
+{
+  "name": "jandi",
+  "version": "0.1.0",
+  "description": "jandi Node SDK for weebhook.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/egg-/jandi.git"
+  },
+  "keywords": [
+    "jandi",
+    "node",
+    "sdk",
+    "webhook"
+  ],
+  "author": {
+    "name": "egg",
+    "email": "i@egg.pe.kr"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/egg-/jandi/issues"
+  },
+  "homepage": "https://github.com/egg-/jandi#readme",
+  "dependencies": {
+    "request": "^2.69.0"
+  }
+}
