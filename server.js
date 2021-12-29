@@ -110,7 +110,7 @@ app.get('/search/news', (req, res) => {
 });
 
 // cmd에서 node가 활성화 되어있을 경우 원하는 시간마다 jandWebhook 함수 설정
-cron.schedule('@hourly', function () {
+cron.schedule('00 * * * *', function () {
     //console.log(`매 초 마다 작업 실행 : ${articleTitle}`, new Date().toString());
     request(naverSearchOptions, function (error, response, body) {
         if (!error && response.statusCode == 200) {
