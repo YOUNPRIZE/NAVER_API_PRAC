@@ -24,7 +24,7 @@ const client_clova_id = '9htmafudjt';
 const client_clova_secret = '4IFEEEtTp4Bm1cJ9Zhr9ftvFEMaKbFU7eWN2Hfz6';
 
 // NAVER SEARCH API INFO
-const keyword = "코로나19";
+const keyword = "코로나";
 const api_url = 'https://openapi.naver.com/v1/search/news?query=' + encodeURI(keyword) + '&display=100';
 const naverSearchOptions = {
     url: api_url,
@@ -110,7 +110,7 @@ app.get('/search/news', (req, res) => {
 });
 
 // cmd에서 node가 활성화 되어있을 경우 원하는 시간마다 jandWebhook 함수 설정
-cron.schedule('50-51 50 17 * * *', function () {
+cron.schedule('@hourly', function () {
     //console.log(`매 초 마다 작업 실행 : ${articleTitle}`, new Date().toString());
     request(naverSearchOptions, function (error, response, body) {
         if (!error && response.statusCode == 200) {
