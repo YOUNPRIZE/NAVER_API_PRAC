@@ -13,7 +13,7 @@ const cron = require('node-cron');
 
 // SETTINGS
 const app = express();
-const port = 50000;
+const port = 60000;
 var jandi = new Jandi()
 jandi.setWebhook('https://wh.jandi.com/connect-api/webhook/25736384/08743a26646f6f7487606607087dac71')
 
