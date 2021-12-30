@@ -56,15 +56,19 @@ var articleTitle = "";
 
 app.use(bodyParser.json());
 
-app.set('view engine','ejs'); //뷰 엔진으로 ejs를 사용
-app.set('views',__dirname + '/views');//뷰 페이지의 폴더 기본 경로 설정
+// 뷰 엔진으로 ejs를 사용
+app.set('view engine','ejs');
+// 뷰 페이지의 폴더 기본 경로 설정
+app.set('views',__dirname + '/views');
 app.engine('html',require('ejs').renderFile);
 
-app.get('/',(req,res)=>{res.render('homepage.ejs');});
-app.use(express.urlencoded({extended:false}));//urlencoded함수는 client에서 post로 보내준 데이터를 자동으로 파싱해주는 역할
+//urlencoded함수는 client에서 post로 보내준 데이터를 자동으로 파싱해주는 역할
 //urlencoded함수는 body-parser모듈의 함수이지만 body-parser가 express에 내장되어 있음
 //entended 옵션은 객체 형태로 전달된 데이터 내에서 또다른 중첩된 객체를 허용 여부를 결정하는 옵션이다.
 //true 일 경우 따로 qs모듈을 설치해야 한다.
+app.use(express.urlencoded({extended:false}));
+
+app.get('/',(req,res)=>{res.render('homepage.ejs');});
 
 app.post(`/search/news`, (req, res) => {
     console.log(req.body.name);
@@ -84,9 +88,10 @@ app.post(`/search/news`, (req, res) => {
             // 네이버 뉴스만 추출
             const extractUrl = _.find(newBody.items, (o) => {return o.link.indexOf("https://news.naver.com") > -1});
 
+            // 올바르지 않은 검색어일 경우를 처리
             if (extractUrl == undefined) {
                 return res.render('notfound.ejs');
-            }
+            };
             
             // request 변수 선언
             const newLink = {
@@ -132,54 +137,6 @@ app.post(`/search/news`, (req, res) => {
         }
     });
 });
-
-// cmd에서 node가 활성화 되어있을 경우 원하는 시간마다 jandWebhook 함수 설정
-/*
-cron.schedule('00 * * * *', function () {
-    //console.log(`매 초 마다 작업 실행 : ${articleTitle}`, new Date().toString());
-    request(naverSearchOptions, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            const newBody = JSON.parse(body);
-            const extractUrl = _.find(newBody.items, (o) => {return o.link.indexOf("https://news.naver.com") > -1});
-            const newLink = {
-                url : extractUrl.link,
-                encoding: "binary",
-                method : 'GET'
-            };
-            request(newLink, (error, response, html) => {
-                if (charset(html) == "euc-kr") {
-                    euckrCheerio(html);
-                } else {
-                    delete newLink.encoding;
-                    request(newLink, (error, response, html) => {
-                        utf8Cheerio(html);
-                    });
-                };
-                doRequest(requestConfig).then((resp) => {
-                    console.log("doRequest func works!");
-                    jandiWebhook(articleTitle, resp.body.summary, extractUrl.link);
-                }).catch((err) => {
-                    console.log("doRequest func do not work.");
-                    console.log(error);
-                });
-            })
-        } else {
-            res.status(response.statusCode).end();
-            console.log('error = ' + response.statusCode);
-        }
-    });
-});
-*/
-
-/*
-app.get('/', (req, res) => {
-    //callback 방식은 불가능, Promise 방식 사용하니 가능
-    //NAVER API Document에 설명이 부족함..
-    doRequest(requestConfig).then((response) => {
-        res.send(response.body.summary);
-    });
-})
-*/
 
 app.listen(port, () => {
     console.log(`http://34.64.139.202 app listening on port ${port}!`);
