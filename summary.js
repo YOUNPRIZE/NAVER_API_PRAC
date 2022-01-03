@@ -19,10 +19,13 @@ var jandi = new Jandi()
 jandi.setWebhook('https://wh.jandi.com/connect-api/webhook/25736384/08743a26646f6f7487606607087dac71')
 
 // API ID, PASSWORD 
-const client_id = '_CKgaKaodp7xXHSjRhjl';
-const client_secret = 'oQrAp8M3fd';
-const client_clova_id = '9htmafudjt';
-const client_clova_secret = '4IFEEEtTp4Bm1cJ9Zhr9ftvFEMaKbFU7eWN2Hfz6';
+// key 값 따로 저장
+/*
+const client_id = '';
+const client_secret = '';
+const client_clova_id = '';
+const client_clova_secret = '';
+*/
 
 // NAVER SEARCH API INFO
 
@@ -72,8 +75,7 @@ app.get('/',(req,res)=>{res.render('homepage.ejs');});
 
 app.post(`/search/news`, (req, res) => {
     console.log(req.body.name);
-    var keyword = req.body.name;
-    const api_url = 'https://openapi.naver.com/v1/search/news?query=' + encodeURI(keyword) + '&display=100';
+    const api_url = 'https://openapi.naver.com/v1/search/news?query=' + encodeURI(req.body.name) + '&display=100';
     const naverSearchOptions = {
         url: api_url,
         headers: {'X-Naver-Client-Id':client_id, 'X-Naver-Client-Secret': client_secret},
@@ -132,7 +134,8 @@ app.post(`/search/news`, (req, res) => {
                 });
             })
         } else {
-            res.status(response.statusCode).end();
+            //res.status(response.statusCode).end();
+            res.render('null.ejs');
             console.log('error = ' + response.statusCode);
         }
     });
