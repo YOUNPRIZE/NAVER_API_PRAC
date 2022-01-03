@@ -10,6 +10,7 @@ const jschardet = require('jschardet');
 const { header, acceptsCharsets } = require('express/lib/request');
 var Jandi = require('jandi');
 const cron = require('node-cron');
+const ejs = require('ejs');
 
 // SETTINGS
 const app = express();
@@ -56,10 +57,10 @@ var articleTitle = "";
 app.use(bodyParser.json());
 
 app.set('view engine','ejs'); //뷰 엔진으로 ejs를 사용
-app.set('views',__dirname+'/');//뷰 페이지의 폴더 기본 경로 설정
+app.set('views',__dirname + '/views');//뷰 페이지의 폴더 기본 경로 설정
 app.engine('html',require('ejs').renderFile);
 
-app.get('/',(req,res)=>{res.render('index.html');});
+app.get('/',(req,res)=>{res.render('homepage.ejs');});
 app.use(express.urlencoded({extended:false}));//urlencoded함수는 client에서 post로 보내준 데이터를 자동으로 파싱해주는 역할
 //urlencoded함수는 body-parser모듈의 함수이지만 body-parser가 express에 내장되어 있음
 //entended 옵션은 객체 형태로 전달된 데이터 내에서 또다른 중첩된 객체를 허용 여부를 결정하는 옵션이다.
@@ -84,12 +85,72 @@ app.post(`/search/news`, (req, res) => {
             const extractUrl = _.find(newBody.items, (o) => {return o.link.indexOf("https://news.naver.com") > -1});
 
             // request 변수 선언
-            const newLink = {
-                url : extractUrl.link,
-                // charset 이 euc-kr일 경우 binary로 encoding 해야함.
-                encoding: "binary",
-                method : 'GET'
-            };
+
+                try {
+                    const newLink = {
+                        url: extractUrl.link,
+                        // charset 이 euc-kr일 경우 binary로 encoding 해야함.
+                        encoding: "binary",
+                        method : 'GET'
+                    };
+                    return newLink;
+                } catch (err) {
+                    console.log("xx")
+                    res.render('notfound.ejs');
+                }
+
+            console.log(xxx);
+            /*
+            try {
+                const newLink = {
+                    url: extractUrl.link,
+                    // charset 이 euc-kr일 경우 binary로 encoding 해야함.
+                    encoding: "binary",
+                    method : 'GET'
+                };
+            } catch (err) {
+                console.log("xx")
+                res.render('notfound.ejs');
+            }
+            */
+            
+            try {
+                request(/*newLink*/xxx, (error, response, html) => {
+                    // charset 이 euc-kr일 경우
+                    if (charset(html) == "euc-kr") {
+                        euckrCheerio(html);
+                    // charset이 utf-8일 경우 
+                    } else {
+                        delete newLink.encoding;
+                        request(newLink, (error, response, html) => {    
+                            utf8Cheerio(html);
+                        });
+                    };
+                    // Promise 방식으로 request.post
+                    doRequest(requestConfig).then((resp) => {
+                        console.log("doRequest func works!");
+                        //res.send(`제목 : ${articleTitle}` + `<br></br><br>요약 : ${resp.body.summary}</br>` + `<br><a href=${extractUrl.link} target='_blank'>Original URL</a></br>`);
+                        res.render('search', {
+                            'title' : `${articleTitle}`,
+                            'summary' : `${resp.body.summary}`,
+                            'url' : `${extractUrl.link}`
+                        });
+                        jandiWebhook(articleTitle, resp.body.summary, extractUrl.link);
+                    // error 처리할 때 catch 문 활용할 것
+                    }).catch((err) => {
+                        console.log("doRequest func do not work.");
+                        console.log(error);
+                        //res.send("CLOVA Summary API 1회 호출 시 사용할 수 있는 최대 글자수는 2,000자 입니다. 2,000자 초과분은 실패처리됩니다." + `<br><a href=${extractUrl.link} target='_blank'>Original URL</a></br>`);
+                        res.render('fail', {
+                            'url' : `${extractUrl.link}`
+                        });
+                    });
+                })
+            } catch (err) {
+                console.log('xxx');
+                res.render('notfound.ejs');
+            }
+            /*
             request(newLink, (error, response, html) => {
                 // charset 이 euc-kr일 경우
                 if (charset(html) == "euc-kr") {
@@ -104,15 +165,23 @@ app.post(`/search/news`, (req, res) => {
                 // Promise 방식으로 request.post
                 doRequest(requestConfig).then((resp) => {
                     console.log("doRequest func works!");
-                    res.send(`제목 : ${articleTitle}` + `<br></br><br>요약 : ${resp.body.summary}</br>` + `<br><a href=${extractUrl.link} target='_blank'>Original URL</a></br>`);
+                    //res.send(`제목 : ${articleTitle}` + `<br></br><br>요약 : ${resp.body.summary}</br>` + `<br><a href=${extractUrl.link} target='_blank'>Original URL</a></br>`);
+                    res.render('search', {
+                        'title' : `${articleTitle}`,
+                        'summary' : `${resp.body.summary}`,
+                        'url' : `${extractUrl.link}`
+                    });
                     jandiWebhook(articleTitle, resp.body.summary, extractUrl.link);
                 // error 처리할 때 catch 문 활용할 것
                 }).catch((err) => {
                     console.log("doRequest func do not work.");
                     console.log(error);
-                    res.send("CLOVA Summary API 1회 호출 시 사용할 수 있는 최대 글자수는 2,000자 입니다. 2,000자 초과분은 실패처리됩니다." + `<br><a href=${extractUrl.link} target='_blank'>Original URL</a></br>`);
+                    //res.send("CLOVA Summary API 1회 호출 시 사용할 수 있는 최대 글자수는 2,000자 입니다. 2,000자 초과분은 실패처리됩니다." + `<br><a href=${extractUrl.link} target='_blank'>Original URL</a></br>`);
+                    res.render('fail', {
+                        'url' : `${extractUrl.link}`
+                    });
                 });
-            })
+            })*/
         } else {
             res.status(response.statusCode).end();
             console.log('error = ' + response.statusCode);
@@ -169,7 +238,7 @@ app.get('/', (req, res) => {
 */
 
 app.listen(port, () => {
-    console.log(`http://34.64.139.202:50000/search/news?query=검색어 app listening on port ${port}!`);
+    console.log(`http://34.64.139.202 app listening on port ${port}!`);
 });
 
 // function list
