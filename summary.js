@@ -15,17 +15,16 @@ const ejs = require('ejs');
 // SETTINGS
 const app = express();
 const port = 60000;
-var jandi = new Jandi()
-jandi.setWebhook('https://wh.jandi.com/connect-api/webhook/25736384/08743a26646f6f7487606607087dac71')
+var jandi = new Jandi();
+jandi.setWebhook('https://wh.jandi.com/connect-api/webhook/25736384/08743a26646f6f7487606607087dac71');
 
 // API ID, PASSWORD 
 // key 값 따로 저장
-/*
+
 const client_id = '';
 const client_secret = '';
 const client_clova_id = '';
 const client_clova_secret = '';
-*/
 
 // NAVER SEARCH API INFO
 
@@ -68,7 +67,7 @@ app.engine('html',require('ejs').renderFile);
 //urlencoded함수는 client에서 post로 보내준 데이터를 자동으로 파싱해주는 역할
 //urlencoded함수는 body-parser모듈의 함수이지만 body-parser가 express에 내장되어 있음
 //entended 옵션은 객체 형태로 전달된 데이터 내에서 또다른 중첩된 객체를 허용 여부를 결정하는 옵션이다.
-//true 일 경우 따로 qs모듈을 설치해야 한다.
+//true 일 경우 따로 qs모듈을 설치해야 한다.=
 app.use(express.urlencoded({extended:false}));
 
 app.get('/',(req,res)=>{res.render('homepage.ejs');});
@@ -86,7 +85,7 @@ app.post(`/search/news`, (req, res) => {
             // 밑 코드 주석처리 하니 잘 출력됨
             //res.writeHead(200, {'Content-Type': 'text/json;charset=utf-8'});
             const newBody = JSON.parse(body);
-
+            console.log(newBody);
             // 네이버 뉴스만 추출
             const extractUrl = _.find(newBody.items, (o) => {return o.link.indexOf("https://news.naver.com") > -1});
 
@@ -116,7 +115,6 @@ app.post(`/search/news`, (req, res) => {
                 // Promise 방식으로 request.post
                 doRequest(requestConfig).then((resp) => {
                     console.log("doRequest func works!");
-                    //res.send(`제목 : ${articleTitle}` + `<br></br><br>요약 : ${resp.body.summary}</br>` + `<br><a href=${extractUrl.link} target='_blank'>Original URL</a></br>`);
                     res.render('search', {
                         'title' : `${articleTitle}`,
                         'summary' : `${resp.body.summary}`,
@@ -127,17 +125,16 @@ app.post(`/search/news`, (req, res) => {
                 }).catch((err) => {
                     console.log("doRequest func do not work.");
                     console.log(error);
-                    //res.send("CLOVA Summary API 1회 호출 시 사용할 수 있는 최대 글자수는 2,000자 입니다. 2,000자 초과분은 실패처리됩니다." + `<br><a href=${extractUrl.link} target='_blank'>Original URL</a></br>`);
                     res.render('fail', {
                         'url' : `${extractUrl.link}`
                     });
                 });
-            })
+            });
         } else {
             //res.status(response.statusCode).end();
             res.render('null.ejs');
             console.log('error = ' + response.statusCode);
-        }
+        };
     });
 });
 
