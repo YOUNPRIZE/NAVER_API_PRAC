@@ -34,6 +34,9 @@ NAVER의 OPEN API 중 검색을 원하는 문자열을 통해 제목, 링크, �
 >
 > ![main](./png/main.png)
 > **코드**
+> <details markdown="1">
+> <summary></summary>
+>
 > ```javascript
 > app.post(`/search/news`, (req, res) => {
 >     // 메인 홈페이지에서 받은 Keyword인 req.body.name을 parameter로 삽입
@@ -98,6 +101,9 @@ NAVER의 OPEN API 중 검색을 원하는 문자열을 통해 제목, 링크, �
 >     });
 > });
 > ```
+>
+> </details>
+>
 > - 메인 홈페이지에서 받은 Keyword를 SEARCH API를 사용할 때 필요한 parameter에 삽입을 하면 해당 Keyword가 들어간 뉴스를 출력
 >
 > ![main](./png/newlink.png)
