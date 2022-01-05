@@ -9,11 +9,20 @@
 > 
 > ![main](./png/search.png)
 > - **Keyword를 입력받을 메인 홈페이지를 View Engine인 ejs를 통해 생성**
+> <details markdown="1">
+> <summary></summary>
+>
 > ```javascript
 > app.set('view engine','ejs');
 > app.get('/',(req,res)=>{res.render('homepage.ejs');});
 > ```
+>
+> </details>
+>
 > - **입력받은 Keyword를 /search/news 로 전송**
+> <details markdown="1">
+> <summary></summary>
+>
 > ```ejs
 > <!DOCTYPE html>
 > <html>
@@ -30,6 +39,9 @@
 > </body>
 > </html>
 > ```
+>
+> </details>
+>
 > **2. 원하는 Keyword를 검색 후 내용 출력**
 >
 > ![main](./png/main.png)
