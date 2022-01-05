@@ -3,6 +3,10 @@
 # NAVER API PRACTICE
 ## Outline
 **NAVER의 OPEN API 중 검색을 원하는 문자열을 통해 제목, 링크, 요약 등의 결과를 알려주는 SEARCH API 와 2,000자 미만의 본문을 3문장 이내로 요약해주는 CLOVA SUMMARY API를 사용하여 Node.js의 Express 프레임워크를 이용해서 GCP(Google Cloud Platform)를 통해 만든 웹서버에 출력해주고, Jandi의 Webhook 서비스를 통해서 해당 내용을 메시지로 전송하는 기능입니다.**
+## Flow
+　
+<p align="center"><img src="./png/flow.png" width="600" height="400"></p>
+
 ## Description
   
 > **1. 메인 홈페이지 생성**
